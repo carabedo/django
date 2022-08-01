@@ -46,6 +46,21 @@ VScode automaticamente va a detectar esta instalacion de python, pero no la usar
 django-admin startproject primer_proyecto
 ```
 
+Deberiamos observar que se creo la siguiente estructura de carpetas y archivos:
+
+```
+primer_proyecto/
+├─ manage.py
+├─ primer_proyecto/
+│  ├─ __init__.py
+│  ├─ asgi.py
+│  ├─ settings.py
+│  ├─ urls.py
+│  ├─ wsgi.py
+
+````
+
+
 Ahora vamos levantar nuestro servidor, para eso nos metemos en la carpeta creada por el `django-admin`.
 ```bash
 cd primer_proyecto
