@@ -1,4 +1,41 @@
-# Intro DJANGO
+# DJANGO
+
+## Instalacion:
+
+UNIX:
+
+```bash
+pip3 install django
+``` 
+
+WINDOWS:
+
+### Linux en windows
+
+Luego de instalar linux
+https://docs.microsoft.com/en-us/windows/wsl/install
+
+```bash
+pip3 install django
+``` 
+Por ultimo instalamos la extension de VScode que nos permite trabajar desde linux.
+
+https://code.visualstudio.com/docs/remote/wsl
+
+### Miniconda
+
+https://docs.conda.io/en/latest/miniconda.html
+
+Luego de instalar miniconda, ejecutar desde la `anaconda prompt`
+
+
+```bash
+conda install django
+``` 
+
+VScode automaticamente va a detectar esta instalacion de python, pero no la usara por default si hay otras instalaciones existentes, debemos setearlo.
+
+
 
 ## Creamos nuestro `primer_proyecto`!
 
