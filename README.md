@@ -266,9 +266,9 @@ Ahora modificamos el archivo `home.html`:
 <!-- indicamos que lo de abajao se dibuje despues del menu armado en la
 base-->
 {% block content %}
-<h1>Bienvenidos a la home</h1>
-<h2>Usted esta ubicado en la home</h2>
-<p>ITBA 2022</p>
+<h1>Bienvenidxs al home</h1>
+<h2>Este es el home.</h2>
+<p>FS 2022</p>
 {% endblock %}
 ```
 
