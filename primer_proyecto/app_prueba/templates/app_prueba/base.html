@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitio Web de Prueba</title>
+</head>
+
+<body>
+<h1>Bienvenido a mi sitio web de Prueba</h1>
+<ul>
+<li><a href="{% url 'home' %}">Inicio</a></li>
+<li><a href="{% url 'about' %}">Acerca de</a></li>
+<li><a href="{% url 'portfolio' %}">Portafolio</a></li>
+<li><a href="{% url 'contact' %}">Contacto</a></li>
+</ul>
+<!-- Ahora viene la parte que vamos a cambiar en cada página-->
+{% block content %}
+
+
+{% endblock %}
+
+<!-- Usamos un template tag BLOCK, una etiqueta de template,sirve para
+añadir lógica de programación dentro del propio HTML -->
+</body>
+</html>
