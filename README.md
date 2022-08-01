@@ -93,11 +93,31 @@ Una app no es simplemente una pagina.
 python3 manage.py startapp app_prueba
 ```
 
+Deberiamos observar que se creo la siguiente estructura de carpetas y archivos:
+
+```
+primer_proyecto/
+├─ manage.py
+├─ app_prueba/
+│  ├─ __init__.py
+│  ├─ views.py
+│  ├─ tests.py
+│  ├─ models.py
+│  ├─ apps.py
+│  ├─ admin.py
+│  ├─ migrations/
+├─ primer_proyecto/
+│  ├─ asgi.py
+│  ├─ settings.py
+│  ├─ urls.py
+│  ├─ wsgi.py
+│  ├─ __init__.py
+````
+
 Vemos que dentro de nuestra aplicación `app_prueba`, vamos a encontrar varios archivos:
 
 - views.py: Una vista hace referencia a la lógica que se ejecuta cuando se hace una
 petición a nuestra web.
-
 
 
 Vamos a editar `views.py` para crear nuestra primera vista:
