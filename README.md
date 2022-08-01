@@ -1,14 +1,16 @@
 # DJANGO
 
-## Instalacion:
+## Instalacion UNIX (linux/macos)
 
-UNIX:
+
 
 ```bash
 pip3 install django
 ``` 
 
-WINDOWS:
+## Instalacion Windows
+
+Tenemos dos opciones:
 
 ### Linux en windows
 
@@ -36,6 +38,7 @@ conda install django
 VScode automaticamente va a detectar esta instalacion de python, pero no la usara por default si hay otras instalaciones existentes, debemos setearlo.
 
 
+----
 
 ## Creamos nuestro `primer_proyecto`!
 
