@@ -107,11 +107,12 @@ primer_proyecto/
 │  ├─ admin.py
 │  ├─ migrations/
 ├─ primer_proyecto/
+│  ├─ __init__.py
 │  ├─ asgi.py
 │  ├─ settings.py
 │  ├─ urls.py
 │  ├─ wsgi.py
-│  ├─ __init__.py
+
 ````
 
 Vemos que dentro de nuestra aplicación `app_prueba`, vamos a encontrar varios archivos:
@@ -166,7 +167,7 @@ from django.shortcuts import HttpResponse
 def home(request):
     html_response = "<h1>Bienvenidxs a mi primer sitio hecho con DJANGO!</h1>"
     for i in range(10):
-        html_response += "<p>Línea " + str(i) + "</p>
+        html_response += "<p>Línea " + str(i) + "</p>"
     return HttpResponse(html_response)
 ```
 
