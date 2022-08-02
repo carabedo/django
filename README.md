@@ -632,3 +632,105 @@ if settings.DEBUG:
 
 Como resultado, Podemos crear un proyecto en nuestra herramienta de gestión de portfolio de forma completa, modificarlo y visualizarlo.
 
+
+
+# MVT
+
+
+Importamos el modelo `Proyectos` a la vista:
+
+
+```python
+from django.shortcuts import render
+from .models import Proyectos
+
+# Create your views here.
+# recuperar los registros de la tabla Projects que maneja nuestro modelo ORM 
+# a través una lista de objetos interna y un método .all() que hace referencia a todos sus objetos:
+def portfolio(request):
+    projects = Proyectos.objects.all() 
+    return render(request, "portfolio/portfolio.html")
+```
+
+
+Tenemos que inyectar estos proyectos en el template, para hacerlo simplemente enviamos a la función render un tercer parámetro con un diccionario y los valores que queremos inyectar.
+
+
+### Actualizamos `urls.py`
+
+Agregamos las dos vistas que venimos trabajando
+
+```python
+from prueba import views as prueba_views
+from portfolio import views as portfolio_views
+
+urlpatterns = [
+    #Creamos un patrón url, en la raíz del sitio (cadena vacía) desde el que llamaremos a la vista views.home que tiene el nombre home.
+    path('',prueba_views.home, name="home"), 
+    path('about/',prueba_views.about, name="about"), 
+    path('contact/',prueba_views.contact, name="contact"), 
+    path('portfolio/',portfolio_views.portfolio, name="portfolio"), #en este indicamos que utilice la vista porfolio
+    path('admin/', admin.site.urls),
+]
+```
+
+Es una Buena práctica separar las apps, para organizar bien el código y que pueda
+escalar. Nos queda en la vista portfolio, hacer referencia al modelo Project para recuperar
+sus instancias y enviarlas al template, así que lo importamos arriba del todo:
+
+```python
+from .models import Proyectos
+def portfolio(request):
+    projects = Proyectos.objects.all()
+    return render(request, "portfolio/portfolio.html", {'projects': projects })
+```
+Se recuperan los registros de la tabla Projects que maneja nuestro modelo ORM a
+través de una lista de objetos interna y un método .all() que hace referencia a todos
+sus objetos.
+
+Finalmente tenemos que inyectar estos proyectos en el template. Para hacerlo
+simplemente enviamos a la función render un tercer parámetro con un diccionario
+y los valores que queremos inyectar
+
+
+### portfolio.html
+
+```python
+<!-- heredamos del template base-->
+{% extends 'app_prueba/base.html' %}
+<!-- cargamos los recursos estaticos-->
+{% load static %}
+<!-- identificamos el contenido dinamico del titulo-->
+{% block title %}Portafolio{% endblock %}
+<!-- identificamos el contenido dinamico del imagen de fondo-->
+{% block background %}{% static 'prueba/img/portfolio-bg.jpg' %}{% endblock %}
+<!-- identificamos el contenido dinamico del header-->
+{% block headers %}
+    <h1>Portafolio</h1>
+    <span class="subheading">Proyectos</span>
+{% endblock %}
+<!-- mostramos los proyectos de la base de datos-->
+{% block content %}
+<!-- usamos el template tag for que nos permite iterar y mostrar atributos-->
+    {% for project in projects %} 
+        <!-- Proyecto -->
+        <div class="row project">   
+            <div class="col-lg-3 col-md-4 offset-lg-1">
+               {% if project.image %}
+
+                <img class="img-fluid" src="{{project.image.url}}" alt="">
+                
+                {% endif %}
+
+            </div>
+            <div class="col-lg-7 col-md-8">
+                <h2 class="section-heading title">{{project.title}}</h2>   
+                <p>{{project.description}}</p>
+                {% if project.link %}
+                    <p><a href="{{project.link}}">Más información</a></p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+``` 
