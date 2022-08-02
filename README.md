@@ -1,5 +1,7 @@
 # DJANGO
 
+- [clase 2](https://github.com/carabedo/django/blob/main/README.md#static-files-models-admin)
+
 ## Instalacion UNIX (linux/macos)
 
 
