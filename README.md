@@ -1,5 +1,5 @@
 # DJANGO
-- [Apps] (https://github.com/carabedo/django/blob/main/README.md#creemos-nuestra-primer-app)
+- [Apps](https://github.com/carabedo/django/blob/main/README.md#creemos-nuestra-primer-app)
 - [Static Files](https://github.com/carabedo/django#static-files-models-admin)
 - [Models](https://github.com/carabedo/django#models)
 - [Admin](https://github.com/carabedo/django#admin)
