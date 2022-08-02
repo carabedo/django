@@ -451,7 +451,7 @@ Nuestro `primer_proyecto` es un ejemplo de un sitio de gestión de proyectos, po
 Para tal fin, vamos a crear una nueva app, denominada portfolio:
 
 ```bash
-python manage.py startapp portfolio
+python3 manage.py startapp portfolio
 ```
 
 Una vez creada nuestra nueva app, vamos a definir un nuevo modelo `Proyectos`. Vamos a ir al archivo `portfolio/models.py`.
@@ -495,8 +495,8 @@ INSTALLED_APPS = [ 'django.contrib.admin',
 Una vez configurada la app, tenemos que ejecutar la migración a la base de datos con dos comandos:
 
 ```bash
-python manage.py makemigrations portfolio
-python manage.py migrate portfolio 
+python3 manage.py makemigrations portfolio
+python3 manage.py migrate portfolio 
 ```
 Cada vez que hagamos un cambio en nuestro archivo models.py tenemos que ejecutar estos dos comandos para crear una migración y posteriormente aplicarla.
 
@@ -505,7 +505,7 @@ Cada vez que hagamos un cambio en nuestro archivo models.py tenemos que ejecutar
 Creemos el usuario admin:
 
 ```
-python manage.py createsuperuser
+python3 manage.py createsuperuser
 ```
 
 Una vez creado el usuario tenemos que iniciar nuevamente el servidor, con el comando runserver, accediendo a la sección admin con el nuevo usuario creado, tendremos que ver la siguiente pantalla.
