@@ -3,6 +3,7 @@
 - [Static Files](https://github.com/carabedo/django#static-files-models-admin)
 - [Models](https://github.com/carabedo/django#models)
 - [Admin](https://github.com/carabedo/django#admin)
+- [MVT](https://github.com/carabedo/django#mvt)
 
 ## Instalacion UNIX (linux/macos)
 
@@ -638,8 +639,7 @@ Como resultado, Podemos crear un proyecto en nuestra herramienta de gestión de 
 
 # MVT
 
-
-Importamos el modelo `Proyectos` a la vista:
+Integremos los modelos en las vitas, para eso vamos a importar el modelo `Proyectos` a la vista de portfolio:
 
 
 ```python
