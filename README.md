@@ -661,7 +661,7 @@ Tenemos que inyectar estos proyectos en el template, para hacerlo simplemente en
 Agregamos las dos vistas que venimos trabajando
 
 ```python
-from prueba import views as prueba_views
+from app_prueba import views as prueba_views
 from portfolio import views as portfolio_views
 
 urlpatterns = [
