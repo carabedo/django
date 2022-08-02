@@ -1,9 +1,6 @@
 from django.db import models
 
 # Create your models here.
-# Create your models here.
-##portfolio/models.py
-#agregamos los atributos con el tipo de datos de Models
 #agregamos los atributos con el tipo de datos de Models
 class Proyectos(models.Model):
     title = models.CharField(max_length=200, verbose_name="Título")

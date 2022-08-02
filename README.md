@@ -370,7 +370,7 @@ Otro contenido dinámico que tenemos son los links a las distintas páginas, en 
   <!-- Navegación -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">ITBANK Portafolio de proyectos</a>
+        <a class="navbar-brand" href="{% url 'home' %}"> Portafolio de proyectos</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" 
           data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
           aria-label="Toggle navigation">Menú<i class="fa fa-bars"></i></button>
@@ -412,7 +412,7 @@ Por ultimo agregamos el bloque de contenido, entre el header y el footer.
         {% block content %}{% endblock %}
     <!-- Pié de página -->
     <footer>
-    <div class="container"><div class="row"><div class="col-lg-8 col-md-10 mx-auto"><ul class="list-inline text-center"><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-youtube fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Copyright &copy; 2022 · ITBANK </p></div></div></div></footer>
+    <div class="container"><div class="row"><div class="col-lg-8 col-md-10 mx-auto"><ul class="list-inline text-center"><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-envelope fa-stack-1x fa-inverse"></i></span></a></li><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-github fa-stack-1x fa-inverse"></i></span></a></li><li class="list-inline-item"><a href="#"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-youtube fa-stack-1x fa-inverse"></i></span></a></li></ul><p class="copyright text-muted">Copyright &copy; 2022</p></div></div></div></footer>
     <!-- Bootstrap y Javascripts -->
     <script src="{% static 'app_prueba/vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'app_prueba/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -431,7 +431,7 @@ Una vez que trabajamos con nuestro template base, ahora modificamos el archivo d
 <!-- Agregamos el contenido estatico-->
 {% load static %}
 <!-- Agregamos el titulo de la home -->
-{% block title %}ITBANK Gestion de Proyectos - Inicio {% endblock %}
+{% block title %} Gestion de Proyectos - Inicio {% endblock %}
 <!-- Agregamos la imagen de fondo -->
 {% block background %}{% static 'app_prueba/img/home-bg.jpg' %}{% endblock %}
 <!-- Agregamos la informacion que queremos en el header-->
