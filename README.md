@@ -707,7 +707,7 @@ En portfolio creamo la carpeta templates y luego otra carpeta llamada portfolio
 <!-- identificamos el contenido dinamico del titulo-->
 {% block title %}Portafolio{% endblock %}
 <!-- identificamos el contenido dinamico del imagen de fondo-->
-{% block background %}{% static 'prueba/img/portfolio-bg.jpg' %}{% endblock %}
+{% block background %}{% static 'app_prueba/img/portfolio-bg.jpg' %}{% endblock %}
 <!-- identificamos el contenido dinamico del header-->
 {% block headers %}
     <h1>Portafolio</h1>
