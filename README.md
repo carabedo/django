@@ -466,7 +466,7 @@ Luego tenemos que crear sus columnas, que van a ser los atributos de la clase. C
 class Proyectos(models.Model):
     title = models.CharField(max_length=200, verbose_name="Título") #agregamos el campo verbose para describir
     description =  models.TextField(verbose_name="Descripción")
-    image = models.ImageField(upload_to='projects',verbose_name="Imagen",null=True, blank=True)
+    image = models.ImageField(upload_to='proyectos_imgs',verbose_name="Imagen",null=True, blank=True)
     #el atributo upload_to, permite idnicar donde subir las imagenes
     link = models.URLField(null=True, blank=True, verbose_name="Enlace Web")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
