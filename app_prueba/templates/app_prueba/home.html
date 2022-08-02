@@ -1,9 +1,16 @@
 <!-- agregamos el bloque extends que tomara el html base-->
 {% extends 'app_prueba/base.html' %}
-<!-- indicamos que lo de abajao se dibuje despues del menu armado en la
-base-->
+<!-- Agregamos el contenido estatico-->
+{% load static %}
+<!-- Agregamos el titulo de la home -->
+{% block title %}ITBANK Gestion de Proyectos - Inicio {% endblock %}
+<!-- Agregamos la imagen de fondo -->
+{% block background %}{% static 'app_prueba/img/home-bg.jpg' %}{% endblock %}
+<!-- Agregamos la informacion que queremos en el header-->
+{% block headers %}
+    <h1>Sitio de Gestión de Proyectos</h1>
+    <span class="subheading">Area de Tecnología de la Información</span>
+{% endblock %}
+<!-- indicamos que lo de abajao se dibuje despues del menu armado en la base-->
 {% block content %}
-<h1>Bienvenidos a la home</h1>
-<h2>Usted esta ubicado en la home</h2>
-<p>ITBA 2022</p>
 {% endblock %}
