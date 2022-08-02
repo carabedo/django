@@ -26,3 +26,10 @@ urlpatterns = [
     path('portfolio/',portfolio_views.portfolio, name="portfolio"), 
     path('admin/', admin.site.urls),
 ]
+
+
+##urls.py
+from django.conf import settings
+if settings.DEBUG:
+  from django.conf.urls.static import static
+  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
