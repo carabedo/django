@@ -454,13 +454,6 @@ python manage.py startapp portfolio
 Una vez creada nuestra nueva app, vamos a definir un nuevo modelo `Proyectos`. Vamos a ir al archivo `portfolio/models.py`.
 Para crear un modelo, tenemos que crear una clase heredando de una clase padre llamada `models.Model`.
 
-```python
-##portfolio/models.py
-from django.db import models
-# Create your models here.
-class Proyectos(models.Model):
-      pass
-```
 
 Luego tenemos que crear sus columnas, que van a ser los atributos de la clase. Crearemos el título, la descripción, imagen y enlace, además de dos campos especiales que nos servirán para almacenar automáticamente la fecha y hora de creación del registro, así como la fecha y hora de la última edición. A cada uno de estos campos le tenemos que indicar el tipo de datos.
 
