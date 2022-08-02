@@ -1,0 +1,35 @@
+<!-- heredamos del template base-->
+{% extends 'app_prueba/base.html' %}
+<!-- cargamos los recursos estaticos-->
+{% load static %}
+<!-- identificamos el contenido dinamico del titulo-->
+{% block title %}Portafolio{% endblock %}
+<!-- identificamos el contenido dinamico del imagen de fondo-->
+{% block background %}{% static 'app_prueba/img/portfolio-bg.jpg' %}{% endblock %}
+<!-- identificamos el contenido dinamico del header-->
+{% block headers %}
+    <h1>Portafolio</h1>
+    <span class="subheading">Proyectos</span>
+{% endblock %}
+<!-- mostramos los proyectos de la base de datos-->
+{% block content %}
+<!-- usamos el template tag for que nos permite iterar y mostrar atributos-->
+    {% for project in projects %} 
+        <!-- Proyecto -->
+        <div class="row project">   
+            <div class="col-lg-3 col-md-4 offset-lg-1">
+                {% if project.image %}
+                <img class="img-fluid" src="{{project.image.url}}" alt="">
+                {% endif %}
+
+            </div>
+            <div class="col-lg-7 col-md-8">
+                <h2 class="section-heading title">{{project.title}}</h2>   
+                <p>{{project.description}}</p>
+                {% if project.link %}
+                    <p><a href="{{project.link}}">Más información</a></p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
