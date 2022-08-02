@@ -1,6 +1,7 @@
 # DJANGO
 
-- [clase 2](https://github.com/carabedo/django#static-files-models-admin)
+- [Static Files](https://github.com/carabedo/django#static-files-models-admin)
+- [Modelos](https://github.com/carabedo/django#static-files-models-admin)
 
 ## Instalacion UNIX (linux/macos)
 
