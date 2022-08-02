@@ -1,7 +1,7 @@
 # DJANGO
 
 - [Static Files](https://github.com/carabedo/django#static-files-models-admin)
-- [Modelos](https://github.com/carabedo/django#static-files-models-admin)
+- [Models](https://github.com/carabedo/django#models)
 
 ## Instalacion UNIX (linux/macos)
 
@@ -442,7 +442,7 @@ Una vez que trabajamos con nuestro template base, ahora modificamos el archivo d
 {% endblock %}
 ```
 
-## Models
+# Models
 
 Nuestro `primer_proyecto` es un ejemplo de un sitio de gestión de proyectos, por eso vamos a necesitar los campos: títulos, descripción, imagen y enlace.
 
@@ -498,7 +498,7 @@ python manage.py migrate portfolio
 ```
 Cada vez que hagamos un cambio en nuestro archivo models.py tenemos que ejecutar estos dos comandos para crear una migración y posteriormente aplicarla.
 
-## Admin
+# Admin
 
 Creemos el usuario admin:
 
