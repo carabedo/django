@@ -695,7 +695,11 @@ y los valores que queremos inyectar
 
 ### portfolio.html
 
-```python
+En portfolio creamo la carpeta templates y luego otra carpeta llamada portfolio
+
+`portfolio/templates/portfolio`
+
+```html
 <!-- heredamos del template base-->
 {% extends 'app_prueba/base.html' %}
 <!-- cargamos los recursos estaticos-->
