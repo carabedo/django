@@ -643,6 +643,7 @@ Integremos los modelos en las vitas, para eso vamos a importar el modelo `Proyec
 
 
 ```python
+##portfolio/views.py
 from django.shortcuts import render
 from .models import Proyectos
 
@@ -663,6 +664,7 @@ Tenemos que inyectar estos proyectos en el template, para hacerlo simplemente en
 Agregamos las dos vistas que venimos trabajando
 
 ```python
+##primer_proyecto/urls.py
 from app_prueba import views as prueba_views
 from portfolio import views as portfolio_views
 
@@ -681,6 +683,7 @@ escalar. Nos queda en la vista portfolio, hacer referencia al modelo Project par
 sus instancias y enviarlas al template, así que lo importamos arriba del todo:
 
 ```python
+##portfolio/views.py
 from .models import Proyectos
 def portfolio(request):
     projects = Proyectos.objects.all()
