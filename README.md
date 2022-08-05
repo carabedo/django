@@ -4,6 +4,7 @@
 - [Models](https://github.com/carabedo/django#models)
 - [Admin](https://github.com/carabedo/django#admin)
 - [MVT](https://github.com/carabedo/django#mvt)
+- [Forms](https://github.com/carabedo/django#mformularios)
 
 ## Instalacion UNIX (linux/macos)
 
@@ -743,3 +744,5 @@ En portfolio creamo la carpeta templates y luego otra carpeta llamada portfolio
     {% endfor %}
 {% endblock %}
 ``` 
+## Formularios
+
