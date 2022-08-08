@@ -1315,7 +1315,7 @@ Vamos a modificiar la template `base.html` insertando estos <li> en la <ul> de l
 </li>
 {% endif %}
 ```
-
+          
 Ahora si ya tenemos listo el login/logout.
 
 ## Permisos de usuario
