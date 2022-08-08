@@ -1220,8 +1220,7 @@ import os
     TEMPLATES = [
       {
        # …
-       'DIRS': [os.path.join(BASE_DIR, 'templates')],
-       'APP_DIRS': True,
+       'DIRS': [os.path.join(BASE_DIR, 'templates')]
        # …
        
        ]}
@@ -1230,8 +1229,6 @@ import os
 
 ### Template del login
 
-Primero vamos a crear una app, denominada registration, en esa app vamos a
-guardar los templates. La ubicación seria la siguiente:
 
 ```html
 {% extends 'app_prueba/base.html' %}
@@ -1280,11 +1277,7 @@ LOGIN_REDIRECT_URL = '/'
 
 ### Template del logout
 
-Si navegás a la url de cierre de sesión (http://127.0.0.1:8000/accounts/logout/)
-verás un extraño comportamiento — tu usuario cerrará la sesión, pero serás
-llevado a la página de cierre de sesión del Administrador. Eso no es lo que quieres,
-aunque sólo sea porque el enlace de inicio de sesión de esa página te lleva a la
-pantalla del inicio de sesión del Administrador.
+Si navegás a la url de cierre de sesión (http://127.0.0.1:8000/accounts/logout/) verás un extraño comportamiento — tu usuario cerrará la sesión, pero serás llevado a la página de cierre de sesión del Administrador. Eso no es lo que quieres, ademas se el enlace de inicio de esa página te lleva a la pantalla del inicio de sesión del Administrador.
 
 Vamos a crear el template de logout
 
@@ -1296,10 +1289,7 @@ Vamos a crear el template de logout
 {% endblock %}
 ```
 
-Esta plantilla es muy simple. Tan sólo muestra un mensaje informándote que has cerrado sesión, y provee un enlace que puedes pulsar para volver a la página de inicio de sesión.
-
-
-Ahora queremos que cuando el usuario salga, vuelva al home, no nos tenemos que olvidar de redirecciones al home:
+Esta plantilla es muy simple. Tan sólo muestra un mensaje informándote que has cerrado sesión y provee un enlace que puedes pulsar para volver a la página de inicio de sesión. Ahora queremos que cuando el usuario salga, vuelva al home, no nos tenemos que olvidar de redirecciones al home:
 
 ```python
 ##settings.py
@@ -1307,10 +1297,11 @@ Ahora queremos que cuando el usuario salga, vuelva al home, no nos tenemos que o
 LOGOUT_REDIRECT_URL = '/'
 ```
 
-## Cerrando la sesión en el header
+## Insertando el login/logout en el header
 
 En este punto sería interesante modificar el diseño del menú superior para mostrar estas opciones en lugar de las del administrador. 
-Vamos a modificiar la template `base.html`:
+
+Vamos a modificiar la template `base.html` insertando estos <li> en la <ul> de la navbar:
 
 ```html
 {% if not request.user.is_authenticated %}
@@ -1324,6 +1315,7 @@ Vamos a modificiar la template `base.html`:
 {% endif %}
 ```
 
+Ahora si ya tenemos listo el login/logout.
 
 ## Permisos de usuario
 
@@ -1337,6 +1329,10 @@ Si el usuario tiene éxito en el inicio de sesión entonces será devuelto a est
 
 ```python
 ##portfolio/views.py
+#importamos el decorador
+from django.contrib.auth.decorators import login_required
+
+#usamos el decorador
 @login_required
 def portfolio(request):
  html_response = "<h1>Proyectos/h1>"
@@ -1369,15 +1365,14 @@ Esta plantilla suministra el texto HTML del correo electrónico, y contiene el e
 Crea `password_reset_email.html` y establece el siguiente contenido:
 
 ```html
-Hemos recibido una solicitud de reinicio de contraseña para el correo {{ email }}. Sigue
-el siguiente link: {{ protocol}}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+Hemos recibido una solicitud de reinicio de contraseña para el correo {{ email }}. 
+Sigue el siguiente link: {{ protocol}}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 ```
 
 ## Reinicio de contraseña hecho
 
 Este formulario es mostrado después de que tu dirección de correo electrónico
-haya sido recogida. Vamos a crear `password_reset_done.html`, y establece el
-siguiente contenido:
+haya sido recogida. Vamos a crear `password_reset_done.html` y establecer el siguiente contenido:
 
 ```html
 {% extends 'app_prueba/base.html' %}
@@ -1442,7 +1437,7 @@ Creamos `password_reset_complete.html`, y establece el siguiente contenido:
 {% endblock %}
 ```
 
-Agregamos en el template de login la opción de olvido de contraseña debajo del formulario
+Por ultimo agregamos en el template `login.html` la opción de olvido de contraseña debajo del formulario
 
 ```html
 <!--Opción de olvido de contraseña-->
@@ -1456,7 +1451,7 @@ Establece la siguiente línea al final del archivo settings.py. Esto registra en
 ```python
 ##settings.py
 #Test email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ```
 Solo funciona si se introducen mails de usuarios que ya existan en la db.
 
