@@ -745,3 +745,302 @@ En portfolio creamo la carpeta templates y luego otra carpeta llamada portfolio
 {% endblock %}
 ``` 
 # Formularios
+
+Un formulario HTML es una colecion de elementos dentro del tag `<form></form>` conteniendo al menos un elemento del tipo: `type="submit"`
+
+Consideremos un formulario simple con un solo campo de texto "team":
+
+```html
+<form action="/team_name_url/" method="POST">
+    <label for="team_name">Enter name: </label>
+    <input id="team_name" type="text" name="name_field" value="Default name for team.">
+    <input type="submit" value="OK">
+</form>
+```
+
+El atributo `type` del campo `input` define qué tipo de widget se mostrará. El `name` y el `id` se utilizan para identificar el campo en JavaScript/CSS/HTML, mientras que el `value` define el valor inicial cuando se muestra por primera vez el formulario. El `id` vincula el `<input>` con el `<label>`. 
+
+El `<input type="submit">` se mostrará como un botón de forma predeterminada. Esto se puede presionar para cargar los datos en todos los demás elementos de entrada en el formulario al servidor (en este caso, solo el campo `team_name`). El atributo `method` del formulario define el método HTTP utilizado para enviar los datos y `action` el destino de los datos en el servidor :
+
+* `action`  acción: el recurso/URL donde se enviarán los datos para su procesamiento cuando se envíe el formulario. Si no se establece (o se establece en una cadena vacía), el formulario se enviará de nuevo a la URL de la página actual.
+
+* `method` método: el método HTTP utilizado para enviar los datos: 
+    - El método POST siempre debe usarse si los datos van a resultar en un cambio en la base de datos del servidor, ya que puede hacerse más resistente a los ataques de solicitud de falsificación entre sitios.
+
+    - El método GET solo debe usarse para formularios que no cambian los datos del usuario (por ejemplo, un formulario de búsqueda). Se recomienda para cuando desee poder marcar o compartir la URL.
+
+
+# Formularios en DJANGO    
+
+Los pasos del manejo de formularios de Django son:
+
+1. Mostrar el formulario predeterminado la primera vez que es
+solicitado por el usuario.
+    -  El formulario puede contener campos en blanco (por ejemplo,
+    si está creando un registro nuevo), o puede estar rellenado
+    previamente con valores iniciales (por ejemplo, si está
+    modificando un registro o si tiene valores iniciales
+    predeterminados útiles)
+    - El formulario se conoce como no vinculado en este punto
+    porque no está asociado con ningún dato ingresado por el
+    usuario (aunque pueda tener valores iniciales).
+    
+2. Recibir datos del 'submit' y vincularlo al formulario.
+    
+    - La vinculación de datos al formulario significa que los datos
+    ingresados por el usuario y cualquier error son guardados para estar disponibles
+    cuando necesitamos volver a desplegar el formulario.
+    
+3. Limpiar y validar los datos. 
+    
+    - La limpieza de los datos realiza una sanitización de la entrada
+    (por ejemplo, remover caracteres no válidos que podrían ser
+    usados para enviar contenido malicioso al servidor SQLINJECTIONS) y
+    convertirlos en objetos consistente de Python.
+    
+    - La validación verifica que los valores sean apropiados para el
+    campo (por ejemplo, que estén en el rango correcto de fechas,
+    no sean demasiado cortos ni demasiado largos, etc.)
+    
+4. Si algún dato es no válido, volver a mostrar el formulario, esta vez con valores validos rellenados por el usuario y los mensajes de error para los campos con problemas.
+
+5. Si todos los datos son válidos, realizar las acciones requeridas (por ejemplo, guardar los datos, enviar un correo electrónico, devolver el resultado de una búsqueda, cargar un archivo, etc)
+
+6. Una vez todas las acciones se hayan completado, redirigir al usuario a otra página.
+
+
+Vamos a crear una nueva app contacto
+
+```bash
+python3 manage.py startapp contact
+```
+
+Agregamos la app contact en el archivo settings
+
+```python
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'prueba',
+'portfolio.apps.PortfolioConfig',
+'contact',
+]
+```
+
+Trasladamos la vista contacto a la nueva app:
+
+```python
+from django.shortcuts import render
+# Create your views here.
+def contact(request):
+    return render(request, "contact/contact.html")
+```
+
+Agregamos el archive urls de contact
+
+```python
+from contact import views as contact_views
+
+
+urlpatterns = [
+    path('',views_app_prueba.home, name="home"), 
+    path('contact/',contact_views.contact, name="contact"), 
+    path('about/',views_app_prueba.about, name="about"), 
+    path('portfolio/',portfolio_views.portfolio, name="portfolio"), 
+    path('admin/', admin.site.urls),
+]
+
+```
+
+
+
+Agregamos el template de contact, a la carpeta template dentro de la app contact:
+
+```html
+{% extends 'app_prueba/base.html' %}
+
+{% load static %}
+
+{% block title %}Contacto{% endblock %}
+
+{% block background %}{% static 'app_prueba/img/contact-bg.jpg' %}{% endblock %}
+
+{% block headers %}
+    <h1>Contacto</h1>
+    <span class="subheading">Envianos tus dudas</span>
+{% endblock %}
+```
+
+## Creando el objeto formulario
+
+
+
+Hay que crear un archivo `forms.py` dentro de la app contact, heredando de una clase llamada Form que hay en el módulo forms.
+Es parecido a crear un modelo, ya que debemos indicar los campos y su tipo. El nuestro tiene tres: 
+
+- Nombre: que será una cadena de texto. 
+- Email: que tiene su propio tipo.
+- Contenido:
+
+Es lo mínimo necesario para que alguien pueda enviarnos un mensaje y le podamos responder. Hay campos para todo: cadenas, números, emails, fechas, opciones desplegables, ficheros, etc.
+
+https://docs.djangoproject.com/en/dev/ref/forms/fields/#built-in-fieldclasses
+
+```python
+from django import forms
+class ContactoForm(forms.Form):
+    name = forms.CharField(label="Nombre", required=True)
+    email = forms.EmailField(label="Email", required=True)
+    content = forms.CharField(label="Contenido", required=True, widget=forms.Textarea())
+```
+
+Es en esta instancia donde podemos agregar todo lo que necesitemos en el formulario HTML sin tener que escribir html, por ejemplo podemos probar que pasa si agregamos los campos de fechas y un selector.
+
+```
+lista=[('A','30 Cuotas'),  ('B','60 Cuotas'), ('C', '90 Cuotas')]
+day = forms.DateField(initial=datetime.date.today)
+item_lista= forms.CharField(label='Que opciones elegis?', widget=forms.Select(choices=lista))
+```
+
+
+Los campos vienen definidos en el módulo forms y para el nombre se utiliza el atributo label. Por defecto estos campos se renderizan como tags <input>, pero se pueden cambiar estableciendo un tipo de widget, como en el caso el contenido donde queremos mostrar un tag <textarea>.
+
+    
+Lo que tenemos que hacer ahora, igual que en el modelo, crear una instancia en la vista y enviarla al template,
+
+```python
+from django.shortcuts import render
+from .forms import ContactoForm
+
+def contact(request):
+    contact_form = ContactoForm
+    return render(request, "contact/contact.html", {'form':contact_form})
+```
+    
+    
+Una vez configurado el formulario, le tenemos que agregar los campos para enviarlo.
+
+## Agregamos el form al template de contacto:    
+    
+En el template de `contact.html` ingresamos el formulario creado, con el 'template tag' form, en este caso lo ponemos dentro de una tabla, podría ser una lista o párrafo.
+    
+    
+```html
+{% block content %}
+<div class="row"> 
+    <div class="col-lg-8 col-md-10 mx-auto">
+      <!-- Formulario de contacto-->
+        <form action="" method="POST">
+        <div class="form-group">
+            
+          <table>
+            {{form.as_p}}
+          </table>
+            
+          <input type="submit" value="Enviar" />
+            
+        </div>
+    
+        </form>
+    <!--{{request.POST}}-->
+    </div>
+</div>
+{% endblock %}
+    
+```
+    
+Hay dos métodos para enviar un formulario: POST y GET. El método GET es visible a simple vista, se añade a la URL de la petición con un interrogante al final. Si no interesa que las peticiones se vean en la barra de direcciones, se utiliza el método POST que se envía oculto.
+    
+En cuanto al atributo action sería la página donde enviamos el formulario, al no establecer ningún valor, se interpretará que la petición POST debe realizarse contra la página actual, que en nuestro caso será `/contact/` de la web.
+
+    
+## CSRF (Cross-Site Request Forgery)
+
+
+Django tiene un mecanismo que evita que podamos hacer HTTP requests desde cualquier lugar, lo cual puede ser peligroso, por eso debemos asegurarnos que el request sale desde la pagina `contact.html`. Esto se hace generando un token que se envia con el formulario para verificar que el requests proviene de nuestro sitio.
+    
+```python
+ ...
+<form action="" method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+...     
+```
+
+Hasta aca pudimos generar un formulario usando django y vemos que envia la informacion ingresada por el usuarix, ahora vamos a mostrar un mensaje al usuario de envio exitoso.  Para esto tenemos que modificar la vista teniendo en cuenta que cuando el formulario se envia con `action = ''` por defecto se vuelve a cargar la pagina.
+          
+```python
+from django.shortcuts import render, redirect
+from django.urls import reverse
+#importamos el modulo donde esta la clase ContactForm
+from .forms import ContactoForm
+
+def contact(request):
+    contact_form = ContactoForm
+    #validamos que ocurrio una peticion POST
+    if request.method == "POST":
+        #Traemos los datos enviados
+        contact_form = contact_form(data=request.POST)
+        #Chequeamos que los datos son validos, de ser asi, los asignamos a una variable
+        if contact_form.is_valid():
+            name = request.POST.get('name','')
+            email = request.POST.get('email','')
+            content = request.POST.get('content','')
+        #En lugar de renderizar el template de contacto hacemos un redireccionamiento
+        return redirect(reverse('contact'))
+    return render(request,'contact/contact.html',{'form': contact_form})
+```
+          
+
+Como ejemplo sencillo agreguemos en la template del contact que muestre un mensaje cuando el formulario haya sido enviado, podriamos usar la informacion del formulario tambien.
+
+Cambiamos la vista para que renderee el template `contact.html` en vez de redireccionar, ademas le enviamos la variable `name` bajo el nombre 'enviado':          
+
+          
+          
+```python
+...          
+     return render(request,'contact/contact.html',{'enviado': name})         
+...          
+```
+          
+Ahora modificamos el template usando un bloque if: 
+         
+```html          
+
+{% block content %}
+{% if enviado %}
+<div class="col-lg-8 col-md-10 mx-auto">
+
+<p><b>Gracias {{enviado}} !</b></p>
+<p><b>Tu mensaje se envio correctamente, en breve nos pondremos en contacto</b></p>
+
+</div>
+
+{% else %}
+
+<div class="row"> 
+    <div class="col-lg-8 col-md-10 mx-auto">
+    <!-- Formulario de contacto-->
+        <form action="" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            
+        <table>
+            {{form.as_p}}
+        </table>
+            
+        <input type="submit" value="Enviar"/>            
+        </div>    
+        </form>
+    <!--{{request.POST}}-->
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+```          
+          
