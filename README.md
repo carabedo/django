@@ -1163,8 +1163,11 @@ with requests using sessions
 
 ## Creando usuarios y grupos
 
-Creamos nuestro primer usuario cuando revisamos el sitio de administración de Django, creado con el comando `python manage.py createsuperuser`. Nuestro
-superusuario ya está autenticado y tiene todos los permisos, así que necesitaremos crear un usuario de prueba que represente un usuario normal del sitio.
+Creamos nuestro primer usuario cuando revisamos el sitio de administración de Django, creado con el comando:
+
+`python3 manage.py createsuperuser`
+
+Nuestro superusuario ya está autenticado y tiene todos los permisos, así que necesitaremos crear un usuario de prueba que represente un usuario normal del sitio.
 
 Vamos a usar el sitio de administración para crear los grupos y logins de nuestro sitio web, ya que es una de las formas más rápidas de hacerlo.
 
