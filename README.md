@@ -5,6 +5,8 @@
 - [Admin](https://github.com/carabedo/django#admin)
 - [MVT](https://github.com/carabedo/django#mvt)
 - [Forms](https://github.com/carabedo/django#formularios)
+- [Sesiones](https://github.com/carabedo/django#sesiones)
+- [Autentificaciones](https://github.com/carabedo/django#autentificaciones)
 
 ## Instalacion UNIX (linux/macos)
 
