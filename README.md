@@ -1558,5 +1558,21 @@ urlpatterns = [
     path('accounts/',include('django.contrib.auth.urls')),
     path('accounts/registro',views_app_prueba.registro, name="registro"), 
 ]
-
 ```
+
+          
+Agreguemos al `home.html` un mensaje de bienvenida para el usuario
+
+```html
+          Bienvenido {{name}} !
+```
+
+Para que esto funcione debemos modificar la vista home enviando la variable `request.user.username`:
+          
+```python          
+    def home(request):
+    if request.user.username:
+        return render(request,"app_prueba/home.html", {'name' : request.user.username})
+    else:    
+        return render(request,"app_prueba/home.html")
+```        
