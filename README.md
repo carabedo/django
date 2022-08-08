@@ -7,6 +7,7 @@
 - [Forms](https://github.com/carabedo/django#formularios)
 - [Sesiones](https://github.com/carabedo/django#sesiones)
 - [Autentificaciones](https://github.com/carabedo/django#autentificaciones)
+- [Registro Usuarios](https://github.com/carabedo/django#registracion)
 
 ## Instalacion UNIX (linux/macos)
 
@@ -1455,3 +1456,93 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ```
 Solo funciona si se introducen mails de usuarios que ya existan en la db.
 
+## Registracion
+
+Vamos a generar un formulario de registro, sus vistas, templates y modelos.
+
+Primero agregamos el form de registro:
+
+```python
+##app_prueba/forms.py
+from django import forms
+
+class RegistroForm(forms.Form):
+    cliente_id = forms.CharField(label="cliente_id", required=True)
+    email = forms.CharField(label="email", required=False)
+    pwd = forms.CharField(label="pwd", required=False)
+```
+
+Ahora creamos la vista y agregamos el form:
+
+```python
+#app_prueba/views.py
+from django.shortcuts import render,redirect
+from django.urls import reverse
+# el form del registro
+from .forms import RegistroForm
+#para crear usuarios
+from django.contrib.auth.models import User
+
+def registro(request):
+    registro_form = RegistroForm
+
+    if request.method == "POST":
+        #Traemos los datos enviados
+        registro_form = registro_form(data=request.POST)
+        #Chequeamos que los datos son validos, de ser asi, los asignamos a una variable
+        #if registro_form.is_valid():
+        cliente_id= request.POST.get('cliente_id','')
+        email = request.POST.get('email','')
+        pwd = request.POST.get('pwd','')
+        print(cliente_id,email,pwd)
+        user = User.objects.create_user(cliente_id, email, pwd)
+        user.save()
+        print('creado')
+        #En lugar de renderizar el template de prestamoo hacemos un redireccionamiento enviando una variable OK
+        return redirect(reverse('login'))
+    return render(request,"app_prueba/registro.html",{'form': registro_form})
+ ```
+Y por ultimo creamos la template `registro.html`:
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% load static %}
+{% block title %}Registro de Usuarios{% endblock %}
+{% block content %}
+<style>.errorlist{color:red;}</style>
+<main role="main">
+<div class="container">
+<div class="row mt-3">
+<div class="col-md-9 mx-auto mb-5">
+<form action="" method="post">{% csrf_token %}
+<h3 class="mb-4">Registro</h3>
+
+<p>
+<input type="text" name="cliente_id" autofocus maxlength="254" required
+id="id_username" class="form-control" placeholder="DNI de usuario"/>
+</p>
+<p>
+    <input type="text" name="email" autofocus maxlength="254" required
+    id="id_username" class="form-control" placeholder="Mail"/>
+    </p>
+<p>
+<input type="password" name="pwd" required
+id="id_password" class="form-control" placeholder="Contraseña"/>
+</p>
+<p><input type="submit" class="btn btn-primary btn-block"
+value="Acceder"></p>
+<!--Opción de olvido de contraseña-->
+
+</form>
+</div>
+</div>
+</div>
+</main>
+{% endblock %}
+```
+Y agregamos el link al registro en el `login.html` abajo del 'olvido su contrasemna':
+
+```html
+<p><a href="{% url 'registro' %}">Registrese</a></p>
+```
+ 
