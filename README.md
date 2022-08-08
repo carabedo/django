@@ -1540,9 +1540,23 @@ value="Acceder"></p>
 </main>
 {% endblock %}
 ```
-Y agregamos el link al registro en el `login.html` abajo del 'olvido su contrasemna':
+Agregamos el link al registro en el `login.html` abajo del 'olvido su contrasemna':
 
 ```html
 <p><a href="{% url 'registro' %}">Registrese</a></p>
 ```
- 
+Finalmente debemos especificar en `urls.py` la vista de registro:
+
+```python
+
+urlpatterns = [
+    path('',views_app_prueba.home, name="home"), 
+    path('contact/',contact_views.contact, name="contact"), 
+    path('about/',views_app_prueba.about, name="about"), 
+    path('portfolio/',portfolio_views.portfolio, name="portfolio"), 
+    path('admin/', admin.site.urls),
+    path('accounts/',include('django.contrib.auth.urls')),
+    path('accounts/registro',views_app_prueba.registro, name="registro"), 
+]
+
+```
