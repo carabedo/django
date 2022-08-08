@@ -1302,7 +1302,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 En este punto sería interesante modificar el diseño del menú superior para mostrar estas opciones en lugar de las del administrador. 
 
-Vamos a modificiar la template `base.html` insertando estos <li> en la <ul> de la navbar:
+Vamos a modificiar la template `base.html` insertando estos 'li' en la 'ul' de la navbar:
 
 ```html
 {% if not request.user.is_authenticated %}
