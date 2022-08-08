@@ -1,0 +1,34 @@
+{% extends 'app_prueba/base.html' %}
+{% load static %}
+{% block title %}Registro de Usuarios{% endblock %}
+{% block content %}
+<style>.errorlist{color:red;}</style>
+<main role="main">
+<div class="container">
+<div class="row mt-3">
+<div class="col-md-9 mx-auto mb-5">
+<form action="" method="post">{% csrf_token %}
+<h3 class="mb-4">Registro</h3>
+
+<p>
+<input type="text" name="cliente_id" autofocus maxlength="254" required
+id="id_username" class="form-control" placeholder="DNI de usuario"/>
+</p>
+<p>
+    <input type="text" name="email" autofocus maxlength="254" required
+    id="id_username" class="form-control" placeholder="Mail"/>
+    </p>
+<p>
+<input type="password" name="pwd" required
+id="id_password" class="form-control" placeholder="Contraseña"/>
+</p>
+<p><input type="submit" class="btn btn-primary btn-block"
+value="Acceder"></p>
+<!--Opción de olvido de contraseña-->
+
+</form>
+</div>
+</div>
+</div>
+</main>
+{% endblock %}

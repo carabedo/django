@@ -1,0 +1,44 @@
+{% extends 'app_prueba/base.html' %}
+
+{% load static %}
+
+{% block title %}Contacto {% endblock %}
+
+{% block background %}{% static 'app_prueba/img/contact-bg.jpg' %}{% endblock %}
+
+{% block headers %}
+    <h1>Contacto</h1>
+    <span class="subheading">{{test}}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if enviado %}
+<div class="col-lg-8 col-md-10 mx-auto">
+
+<p><b>Gracias {{enviado}} !</b></p>
+<p><b>Tu mensaje se envio correctamente, en breve nos pondremos en contacto</b></p>
+
+</div>
+
+{% else %}
+
+<div class="row"> 
+    <div class="col-lg-8 col-md-10 mx-auto">
+    <!-- Formulario de contacto-->
+        <form action="" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            
+        <table>
+            {{form.as_p}}
+        </table>
+            
+        <input type="submit" value="Enviar"/>            
+        </div>    
+        </form>
+    <!--{{request.POST}}-->
+    </div>
+</div>
+{% endif %}
+{% endblock %}

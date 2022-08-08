@@ -17,15 +17,18 @@ from django.contrib import admin
 from django.urls import path
 from app_prueba import views as views_app_prueba
 from portfolio import views as portfolio_views
+from contact import views as contact_views
+from django.urls import include
 
 
 urlpatterns = [
     path('',views_app_prueba.home, name="home"), 
-    path('contact/',views_app_prueba.contact, name="contact"), 
+    path('contact/',contact_views.contact, name="contact"), 
     path('about/',views_app_prueba.about, name="about"), 
     path('portfolio/',portfolio_views.portfolio, name="portfolio"), 
     path('admin/', admin.site.urls),
-]
+    path('accounts/',include('django.contrib.auth.urls')),
+    path('accounts/registro',views_app_prueba.registro, name="registro") ]
 
 
 ##urls.py

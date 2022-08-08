@@ -33,6 +33,15 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">Quienes Somos</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'portfolio' %}">Portafolio</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contacto</a></li>
+            {% if not request.user.is_authenticated %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Acceder</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Salir</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
        </div>
