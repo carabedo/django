@@ -1043,4 +1043,422 @@ Ahora modificamos el template usando un bloque if:
 {% endif %}
 {% endblock %}
 ```          
-          
+
+# Sesiones
+
+Las sesiones son el mecanismo que usa Django (y la mayor parte de Internet) para
+guardar registro del "estado" entre el sitio y un navegador en particular. Las
+sesiones te permiten almacenar información arbitraria por navegador, y tener esta
+información disponible para el sitio cuando el navegador se conecta. Cada pieza
+individual de información asociada con una sesión se conoce como "clave", que se
+usa tanto para guardar como para recuperar la información.
+
+Django usa una cookie que contiene un id de sesión específica para identificar cada
+navegador y su sesión asociada con el sitio. La información real de la sesión se
+guarda por defecto en la base de datos del sitio (esto es más seguro que guardar
+la información en una cookie, donde es más vulnerable para los usuarios
+maliciosos). Puedes configurar Django para guardar la información de sesión en
+otros lugares (caché, archivos, cookies "seguras"), pero la opción por defecto es
+una buena opción y relativamente segura.
+
+Las sesiones fueron automáticamente habilitadas cuando creamos el sitio web del
+proyecto. La configuración está establecida en las secciones INSTALLED_APPS y
+MIDDLEWARE del archivo del proyecto `settings.py`:
+
+```python
+INSTALLED_APPS = [
+...
+'django.contrib.sessions',
+....
+MIDDLEWARE = [
+...
+'django.contrib.sessions.middleware.SessionMiddleware',
+....
+
+``` 
+
+## Usando las sesiones
+
+Se puede usar el atributo session en la vista desde el parámetro `request` (una
+HttpRequest que se envía como el primer argumento a la vista). Este atributo de
+sesión representa la conexión específica con el usuario actual (o para ser más
+preciso, la conexión con el navegador actual, como se identifica mediante la id de
+sesión en la cookie del navegador para este sitio).
+
+**El atributo session es un objeto tipo diccionario** que puedes leer y escribir tantas
+veces como quieras en tu vista, modificándolo como desees. Puedes realizar todas
+las operaciones normales de diccionario, incluyendo eliminar toda la información,
+probar si una clave está presente, iterar a través de la información, etc. Sin
+embargo, la mayor parte del tiempo solo usarás la API estándar de "diccionario"
+para recuperar y establecer valores.
+
+Se puede recuperar, establecer o eliminar información, asociada con la sesión
+actual (del navegador). La API ofrece también una cantidad de métodos adicionales que se usan
+mayoritariamente para administrar la cookie de sesión asociada. Por ejemplo, hay
+métodos para probar si el navegador cliente soporta cookies, establecer y revisar
+las fechas de expiración de las cookies, y para eliminar sesiones expiradas del
+almacén de datos.
+
+https://docs.djangoproject.com/en/4.0/topics/http/sessions/
+
+### Guardando la información de la sesión
+
+Por defecto, Django solo guarda información en la base de datos de sesión y envía
+la cookie de sesión al cliente cuando la sesión ha sido modificada (asignada) o
+eliminada.
+
+
+Vamos a agregar un conteo de visitas al home, en el archivo `app_prueba/views.py` vamos a agregar en la función que renderiza la
+`home` el contador. Para eso obtenemos el valor de la clave de sesión `num_visits`, estableciendo el valor a 0 si no había sido establecido previamente. Cada vez que se recibe la solicitud, incrementamos el valor y lo guardamos de vuelta en la sesión (para la siguiente vez que el usuario visita la página).
+
+Necesitamos usar la variable `context` y agregar la variable `num_visits`para envíar al template.
+
+```python
+##app_prueba/views.py
+#Obtenemos el valor de la clave de sesion num_visits, estableciendo el valor a 0 si no habia sido establecido anteriormente
+num_visits = request.session.get('num_visits',0)
+# cada vez que se recibe la solicitud, incrementamos el valor y lo guardamos de vuelta en la sesion
+request.session['num_visits'] = num_visits + 1
+context = {'num_visits' : num_visits}
+#utilizamos el método render del módulo http
+return render(request,"app_prueba/home.html", context=context)
+```
+
+
+Por ultimo vamos a modificar el template del home, al final de la sección "content": Notemos que llamamos las llaves del diccionario `context` con doble llave: `{{key1}}`:
+
+```html
+<!-- app_prueba/templates/app_prueba/home.html  -->
+<!-- agregamos dentro de la pagina el contador de visitas-->
+{% block content %}
+<p>Ha visitado esta pagina {{ num_visits }}{% if num_visits == 1 %} vez {% else %}
+veces {% endif %}.</p>
+{% endblock %}
+```
+
+
+# Autentificaciones
+
+Django proporciona un sistema de autenticación y autorización ("permisos"), construido sobre el framework de sesión, que permite verificar credenciales de usuario y definir qué acciones puede realizar cada usuario. El framework incluye modelos para Users y Groups (una forma genérica de aplicar permisos a más de
+un usuario a la vez), permisos/indicadores (permissions/flags) que designan si un usuario puede realizar una tarea, formularios y vistas para iniciar sesión en los usuarios y view tools para restringir el contenido.
+
+Tambien nos permite habilitar la autenticación de usuarios en el sitio web, crear nuestras propias páginas de login y logout, añadir permisos a los modelos, y controlar el acceso a las páginas. El sistema de autenticación es muy flexible, y puedes crear URLs, formularios, vistas y plantillas simplemente llamando a la API provista para loguear al usuario.
+
+
+La autenticación fue habilitada automáticamente cuando creamos el sitio web (lo podemos revisar en el archivo `settings.py`).
+
+```
+##settings.py
+INSTALLED_APPS = [
+...
+'django.contrib.auth', #Core authentication framework and its default models.
+'django.contrib.contenttypes', #Django content type system (allows permissions
+to be associated with models).
+....
+MIDDLEWARE = [
+...
+'django.contrib.sessions.middleware.SessionMiddleware', #Manages sessions
+across requests
+...
+'django.contrib.auth.middleware.AuthenticationMiddleware', #Associates users
+with requests using sessions
+```
+
+## Creando usuarios y grupos
+
+Creamos nuestro primer usuario cuando revisamos el sitio de administración de Django, creado con el comando `python manage.py createsuperuser`. Nuestro
+superusuario ya está autenticado y tiene todos los permisos, así que necesitaremos crear un usuario de prueba que represente un usuario normal del sitio.
+
+Vamos a usar el sitio de administración para crear los grupos y logins de nuestro sitio web, ya que es una de las formas más rápidas de hacerlo.
+
+Ingresamos al sitio usando las credenciales de la cuenta de tu superusuario. El nivel superior del sitio de administración "Admin site" muestra todos tus modelos, ordenados por la aplicación por defecto de Django "django application". 
+
+Desde la sección de Autenticación y Autorización puedes dar clic en los enlaces de Usuarios "Users" y Grupos "Groups" para ver todos sus registros existentes.
+ 
+El sitio de administrador creara el nuevo usuario e inmediatamente ira a la pantalla de Change user "Cambios del usuario" donde puedes cambiar nombre de usuario "Username" y agregar información para los campos opcionales del modelo de Usuario "User". Estos campos incluyen el primer nombre "first name", el apellido "last name", la dirección de correo electrónico "email adress", los estados de los usuarios y sus permisos "users status and permissions" (solo el indicador Active "Activo" debería ser activado). Mas se puede especificar los grupos y permisos del usuario, y ver datos importantes relacionados a el usuario (ej.: la fecha en que se agregó y la fecha del último inicio de sesión)
+
+## Configurando las vistas de autenticación
+
+Django provee todo lo necesario para crear las páginas de autenticación para manejar inicio y cierre de sesión y gestión de contraseñas "out of the box". Esto incluye un mapeador de URL, vistas "views" y formularios "forms", pero no incluye las plantillas "templates” (pilas no incluidas).
+
+### URL's del proyecto
+
+Añade el siguiente código al final del archivo `urls.py`:
+
+```python
+##urls.py
+urlpatterns = [
+path('',prueba_views.home, name="home"),
+path('about/',prueba_views.about, name="about"),
+path('portfolio/',portfolio_views.portfolio, name="portfolio")
+path('admin/', admin.site.urls),
+path('contact/', include('contact.urls')),
+#Agregamos las direcciones de autenticacion (login, logout, gestion password)
+path('accounts/',include('django.contrib.auth.urls'))]
+```
+
+Básicamente tenemos el login, el logout y varias vistas para manejar la gestión de contraseñas. Recordemos que anteriormente dijimos que lo único que no provee DJANGO son los templates de autenticación, por lo que vamos a hacerlos.
+
+
+
+## Templates de la registracion
+
+Todos estos templates tienen que estar en la carpeta `templates\registration`.
+
+- login
+- logout
+- password_reset_complete
+- password_reset_confirm
+- password_reset_done
+- password_reset_email
+- password_reset_form
+
+Luego de haber creado la carpeta templates tenemos que agregarla en `settings.py`:
+
+```python
+import os 
+
+    # …
+    TEMPLATES = [
+      {
+       # …
+       'DIRS': [os.path.join(BASE_DIR, 'templates')],
+       'APP_DIRS': True,
+       # …
+       
+       ]}
+```
+
+
+### Template del login
+
+Primero vamos a crear una app, denominada registration, en esa app vamos a
+guardar los templates. La ubicación seria la siguiente:
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% load static %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<style>.errorlist{color:red;}</style>
+<main role="main">
+<div class="container">
+<div class="row mt-3">
+<div class="col-md-9 mx-auto mb-5">
+<form action="" method="post">{% csrf_token %}
+<h3 class="mb-4">Iniciar sesión</h3>
+{% if form.non_field_errors %}
+<p style="color:red">Usuario o contraseña incorrectos, prueba de nuevo.</p>
+{% endif %}
+<p>
+<input type="text" name="username" autofocus maxlength="254" required
+id="id_username" class="form-control" placeholder="Nombre de usuario"/>
+</p>
+<p>
+<input type="password" name="password" required
+id="id_password" class="form-control" placeholder="Contraseña"/>
+</p>
+<p><input type="submit" class="btn btn-primary btn-block"
+value="Acceder"></p>
+</form>
+</div>
+</div>
+</div>
+</main>
+{% endblock %}
+```
+
+Ahora para visualizar el login entremos a http://127.0.0.1:8000/accounts/login/
+
+Si intentas iniciar sesión tendrá éxito y serás redirigido a otra página (por defecto será http://127.0.0.1:8000/accounts/profile/). El problema aquí es que, por defecto, Django espera que después de iniciar sesión seas llevado a una página de perfil (que podrá ser el caso o no). Como no has definido esta página todavía obtendremos un error
+
+Abre la configuración del `settings.py` y añade al final el texto de abajo. Ahora cuando inicies sesión deberías ser redirigido a la página de inicio por defecto.
+
+```python
+##settings.py
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/'
+```
+
+### Template del logout
+
+Si navegás a la url de cierre de sesión (http://127.0.0.1:8000/accounts/logout/)
+verás un extraño comportamiento — tu usuario cerrará la sesión, pero serás
+llevado a la página de cierre de sesión del Administrador. Eso no es lo que quieres,
+aunque sólo sea porque el enlace de inicio de sesión de esa página te lleva a la
+pantalla del inicio de sesión del Administrador.
+
+Vamos a crear el template de logout
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% block content %}
+<p>Has salido de la sesión!</p>
+<a href="{% url 'login'%}">Hace clic aca nuevamente para iniciar sesión.</a>
+{% endblock %}
+```
+
+Esta plantilla es muy simple. Tan sólo muestra un mensaje informándote que has cerrado sesión, y provee un enlace que puedes pulsar para volver a la página de inicio de sesión.
+
+
+Ahora queremos que cuando el usuario salga, vuelva al home, no nos tenemos que olvidar de redirecciones al home:
+
+```python
+##settings.py
+# Redirect to home URL after logout (Default redirects to /accounts/profile/)
+LOGOUT_REDIRECT_URL = '/'
+```
+
+## Cerrando la sesión en el header
+
+En este punto sería interesante modificar el diseño del menú superior para mostrar estas opciones en lugar de las del administrador. 
+Vamos a modificiar la template `base.html`:
+
+```html
+{% if not request.user.is_authenticated %}
+<li class="nav-item">
+<a class="nav-link" href="{% url 'login' %}">Acceder</a>
+</li>
+{% else %}
+<li class="nav-item">
+<a class="nav-link" href="{% url 'logout' %}">Salir</a>
+</li>
+{% endif %}
+```
+
+
+## Permisos de usuario
+
+Puedes obtener información en las plantillas sobre el usuario que actualmente ha iniciado sesión con la variable de plantillas `{{ user }}` (esto se añade por defecto al contexto de la plantilla cuando configuras el proyecto)
+
+Es típico que primero pruebes con la variable de plantilla `{{ user.is_authenticated}}` para determinar si el usuario puede ver el contenido específico, como hicimos cuando agregamos en el menú, lo botones de acceso y salir.
+
+Ahora podemos restringir si el usuario puede ver las vistas o no. La forma más fácil para restringir el acceso a tus funciones es aplicar `login_required` a tu función de vista. Si el usuario ha iniciado sesión entonces tu código de vista se ejecutará como normalmente lo hace. Si el usuario no ha iniciado sesión, se redirigirá a la URL de inicio de sesión definida en tu configuración de proyecto (settings.LOGIN_URL), pasando el directorio absoluto actual como el parámetro URL next.
+
+Si el usuario tiene éxito en el inicio de sesión entonces será devuelto a esta página, pero esta vez autenticado. Por ejemplo, vamos a restringir que para ver los proyectos hay que estar autenticado agregandole el decorador `@login_required` la vista: 
+
+```python
+##portfolio/views.py
+@login_required
+def portfolio(request):
+ html_response = "<h1>Proyectos/h1>"
+ return HttpResponse(html_response)
+```
+
+Muchas veces hay que limpiar el cache del navegador para comprobar que funciona correctamente.
+
+
+## Formulario de reinicio de contraseña
+
+Este es el formulario para obtener la dirección del correo electrónico del usuario (para enviar el correo de reinicio de contraseña).
+
+Vamos a crear el template `password_reset_form.html`
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+{% if form.email.errors %} {{ form.email.errors }} {% endif %}
+<p>{{ form.email }}</p>
+<input type="submit" class="btn btn-default btn-lg" value="Reiniciar contraseña" />
+</form>
+{% endblock %}
+```
+
+### Correo electrónico de reinicio de contraseña
+
+Esta plantilla suministra el texto HTML del correo electrónico, y contiene el enlace de reseteo que enviaremos a los usuarios.
+Crea `password_reset_email.html` y establece el siguiente contenido:
+
+```html
+Hemos recibido una solicitud de reinicio de contraseña para el correo {{ email }}. Sigue
+el siguiente link: {{ protocol}}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+```
+
+## Reinicio de contraseña hecho
+
+Este formulario es mostrado después de que tu dirección de correo electrónico
+haya sido recogida. Vamos a crear `password_reset_done.html`, y establece el
+siguiente contenido:
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% block content %}
+<p>Hemos enviado un correo electrónico con las instrucciones para configurar una
+nueva contraseña
+. Si no arriba en algunos minutos, por favor revisa la carpeta SPAM</p>
+{% endblock %}
+``` 
+
+## Confirmación de reinicio de contraseña
+
+Esta página es donde introduces una nueva contraseña después de clickear el enlace en el correo electrónico de reinicio de contraseña. 
+Creamos `password_reset_confirm.html` con el siguiente contenido:
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% load static %}
+{% block content %}
+{% if validlink %}
+<p>Por favor ingrese su nueva contraseña.</p>
+<form action="" method="post">
+<div style="display:none">
+<input type="hidden" value="{{ csrf_token }}" name="csrfmiddlewaretoken">
+</div>
+<table>
+<tr>
+<td>{{ form.new_password1.errors }}
+<label for="id_new_password1">Nueva contraseña:</label></td>
+<td>{{ form.new_password1 }}</td>
+</tr>
+<tr>
+<td>{{ form.new_password2.errors }}
+<label for="id_new_password2">Confirme Contraseña:</label></td>
+<td>{{ form.new_password2 }}</td>
+</tr>
+<tr>
+<td></td>
+<td><input type="submit" value="Cambiar mi contraseña" /></td>
+</tr>
+</table>
+</form>
+{% else %}
+<h1>Fallo el reinicio de contraseña</h1>
+<p>El link de reinicio de contraseña es invalido, posiblemente porque ya fue usado.
+Por favor solicite un nuevo reinicio de contraseña.</p>
+{% endif %}
+{% endblock %}
+```
+
+## Reinicio de contraseña completado
+
+Este es el último paso de la plantilla de reinicio de contraseña, que es mostrada para notificarte cuando el reinicio de contraseña ha tenido éxito. 
+
+Creamos `password_reset_complete.html`, y establece el siguiente contenido:
+
+```html
+{% extends 'app_prueba/base.html' %}
+{% block content %}
+<h1>La contraseña ha sido cambiada con éxito!</h1>
+<p><a href="{% url 'login' %}">Desea iniciar sesión nuevamente?</a></p>
+{% endblock %}
+```
+
+Agregamos en el template de login la opción de olvido de contraseña debajo del formulario
+
+```html
+<!--Opción de olvido de contraseña-->
+<p><a href="{% url 'password_reset' %}">Olvido su contraseña?</a></p>
+```
+
+Para poder probar el reinicio de correo sin enviar un email, podemos hacer lo siguiente:
+
+Establece la siguiente línea al final del archivo settings.py. Esto registra en la consola cualquier envío de correo electrónico (y así puedes copiar el enlace de reinicio de contraseña desde dicha consola).
+
+```python
+##settings.py
+#Test email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend
+```
+Solo funciona si se introducen mails de usuarios que ya existan en la db.
+
