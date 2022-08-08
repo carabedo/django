@@ -1110,17 +1110,15 @@ eliminada.
 Vamos a agregar un conteo de visitas al home, en el archivo `app_prueba/views.py` vamos a agregar en la función que renderiza la
 `home` el contador. Para eso obtenemos el valor de la clave de sesión `num_visits`, estableciendo el valor a 0 si no había sido establecido previamente. Cada vez que se recibe la solicitud, incrementamos el valor y lo guardamos de vuelta en la sesión (para la siguiente vez que el usuario visita la página).
 
-Necesitamos usar la variable `context` y agregar la variable `num_visits`para envíar al template.
+Necesitamos usar la variable `context` y agregar la variable `num_visits`para envíar al template `home.html`.
 
 ```python
 ##app_prueba/views.py
-#Obtenemos el valor de la clave de sesion num_visits, estableciendo el valor a 0 si no habia sido establecido anteriormente
-num_visits = request.session.get('num_visits',0)
-# cada vez que se recibe la solicitud, incrementamos el valor y lo guardamos de vuelta en la sesion
-request.session['num_visits'] = num_visits + 1
-context = {'num_visits' : num_visits}
-#utilizamos el método render del módulo http
-return render(request,"app_prueba/home.html", context=context)
+def home(request):
+    num_visits = request.session.get('num_visits',0)
+    request.session['num_visits'] = num_visits + 1
+    context = {'num_visits':num_visits}
+    return render(request,"app_prueba/home.html", context=context)
 ```
 
 
