@@ -817,7 +817,7 @@ Vamos a crear una nueva app contacto
 python3 manage.py startapp contact
 ```
 
-Agregamos la app contact en el archivo settings
+Agregamos la app contact en el archivo `settings.py`
 
 ```python
 INSTALLED_APPS = [
@@ -833,16 +833,17 @@ INSTALLED_APPS = [
 ]
 ```
 
-Trasladamos la vista contacto a la nueva app:
+Trasladamos la vista contact a la nueva app:
 
 ```python
+##contact/views.py
 from django.shortcuts import render
 # Create your views here.
 def contact(request):
     return render(request, "contact/contact.html")
 ```
 
-Agregamos el archive urls de contact
+Agregamos la vista al archivo `urls.py` del proyecto:
 
 ```python
 from contact import views as contact_views
@@ -860,7 +861,7 @@ urlpatterns = [
 
 
 
-Agregamos el template de contact, a la carpeta template dentro de la app contact:
+Agregamos el template de `contact.html` en `contact/templates/contact`:
 
 ```html
 {% extends 'app_prueba/base.html' %}
@@ -881,7 +882,8 @@ Agregamos el template de contact, a la carpeta template dentro de la app contact
 
 
 
-Hay que crear un archivo `forms.py` dentro de la app contact, heredando de una clase llamada Form que hay en el módulo forms.
+Hay que crear un archivo `forms.py` dentro de la app contact, heredando de una clase llamada `Form` que hay en el módulo `forms`.
+
 Es parecido a crear un modelo, ya que debemos indicar los campos y su tipo. El nuestro tiene tres: 
 
 - Nombre: que será una cadena de texto. 
@@ -912,7 +914,7 @@ item_lista= forms.CharField(label='Que opciones elegis?', widget=forms.Select(ch
 Los campos vienen definidos en el módulo forms y para el nombre se utiliza el atributo label. Por defecto estos campos se renderizan como tags <input>, pero se pueden cambiar estableciendo un tipo de widget, como en el caso el contenido donde queremos mostrar un tag <textarea>.
 
     
-Lo que tenemos que hacer ahora, igual que en el modelo, crear una instancia en la vista y enviarla al template,
+Lo que tenemos que hacer ahora, igual que en el modelo, crear una instancia de este formulario en la vista y enviarla al template,
 
 ```python
 from django.shortcuts import render
@@ -923,8 +925,7 @@ def contact(request):
     return render(request, "contact/contact.html", {'form':contact_form})
 ```
     
-    
-Una vez configurado el formulario, le tenemos que agregar los campos para enviarlo.
+Todavia no vemos ningun formulario, para eso tenemos que agregar en el templete el formulario que acabamos de crear.
 
 ## Agregamos el form al template de contacto:    
     
@@ -954,10 +955,15 @@ En el template de `contact.html` ingresamos el formulario creado, con el 'templa
 {% endblock %}
     
 ```
-    
 Hay dos métodos para enviar un formulario: POST y GET. El método GET es visible a simple vista, se añade a la URL de la petición con un interrogante al final. Si no interesa que las peticiones se vean en la barra de direcciones, se utiliza el método POST que se envía oculto.
     
 En cuanto al atributo action sería la página donde enviamos el formulario, al no establecer ningún valor, se interpretará que la petición POST debe realizarse contra la página actual, que en nuestro caso será `/contact/` de la web.
+
+Ahora si podemos ver el formulario! 
+
+## Enviando el formulario
+
+Que pasa si intentamos enviar informacion usando el formulario?
 
     
 ## CSRF (Cross-Site Request Forgery)
@@ -974,6 +980,10 @@ Django tiene un mecanismo que evita que podamos hacer HTTP requests desde cualqu
 ```
 
 Hasta aca pudimos generar un formulario usando django y vemos que envia la informacion ingresada por el usuarix, ahora vamos a mostrar un mensaje al usuario de envio exitoso.  Para esto tenemos que modificar la vista teniendo en cuenta que cuando el formulario se envia con `action = ''` por defecto se vuelve a cargar la pagina.
+          
+Como ejemplo sencillo agreguemos en la template del contact que muestre un mensaje cuando el formulario haya sido enviado, podriamos incluso usar la informacion del formulario. Cambiemos la vista para que renderee el template `contact.html` a la cual le enviaremos la variable `name` bajo el nombre 'enviado':          
+
+                    
           
 ```python
 from django.shortcuts import render, redirect
@@ -992,25 +1002,12 @@ def contact(request):
             name = request.POST.get('name','')
             email = request.POST.get('email','')
             content = request.POST.get('content','')
-        #En lugar de renderizar el template de contacto hacemos un redireccionamiento
-        return redirect(reverse('contact'))
+            return render(request,'contact/contact.html',{'enviado': name})         
     return render(request,'contact/contact.html',{'form': contact_form})
 ```
           
 
-Como ejemplo sencillo agreguemos en la template del contact que muestre un mensaje cuando el formulario haya sido enviado, podriamos usar la informacion del formulario tambien.
-
-Cambiamos la vista para que renderee el template `contact.html` en vez de redireccionar, ademas le enviamos la variable `name` bajo el nombre 'enviado':          
-
-          
-          
-```python
-...          
-     return render(request,'contact/contact.html',{'enviado': name})         
-...          
-```
-          
-Ahora modificamos el template usando un bloque if: 
+Ahora modificamos el `block content` del template `contact.html` usando un bloque if que solo se mostrara cuando la vista sea generada con la variable `enviado`: 
          
 ```html          
 
