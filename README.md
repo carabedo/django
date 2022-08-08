@@ -1187,14 +1187,11 @@ Añade el siguiente código al final del archivo `urls.py`:
 
 ```python
 ##urls.py
-urlpatterns = [
-path('',prueba_views.home, name="home"),
-path('about/',prueba_views.about, name="about"),
-path('portfolio/',portfolio_views.portfolio, name="portfolio")
-path('admin/', admin.site.urls),
-path('contact/', include('contact.urls')),
+# importamos la funcion include
+from django.urls import include
+
 #Agregamos las direcciones de autenticacion (login, logout, gestion password)
-path('accounts/',include('django.contrib.auth.urls'))]
+path('accounts/',include('django.contrib.auth.urls'))
 ```
 
 Básicamente tenemos el login, el logout y varias vistas para manejar la gestión de contraseñas. Recordemos que anteriormente dijimos que lo único que no provee DJANGO son los templates de autenticación, por lo que vamos a hacerlos.
@@ -1216,6 +1213,7 @@ Todos estos templates tienen que estar en la carpeta `templates\registration`.
 Luego de haber creado la carpeta templates tenemos que agregarla en `settings.py`:
 
 ```python
+# importamos el modulo os
 import os 
 
     # …
