@@ -1872,9 +1872,8 @@ Excelente curso gratuito: https://portswigger.net/web-security
 
 Mas informacion sobre Django y seguridad: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/web_application_security
 
-Probemos estas estas cosas en este servidor:
+Probemos algunas cosas en [este](ec2-34-227-58-4.compute-1.amazonaws.com:8000/) servidor:
 
-ec2-34-227-58-4.compute-1.amazonaws.com:8000/
 
 ## SQL injection
 
