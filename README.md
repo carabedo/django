@@ -1825,6 +1825,19 @@ Los argumentos de palabras clave de búsquedas básicas toman la forma:
 
 `field__lookuptype : value (Con doble guión bajo)`
 
+Ejemplo:
+
+```python
+Entry.objects.get(id__exact=14)
+Entry.objects.get(id__exact=None)
+```
+Equivale a SQL:
+
+```sql
+SELECT ... WHERE id = 14;
+SELECT ... WHERE id IS NULL;
+```
+
 Ejemplos de lookuptype:
 
 - exact: Devuelve una coincidencia complete con el parámetro de busqueda: `filter_contacts = Contact.objects.filter(name__exact='Santiago')`
