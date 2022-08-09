@@ -8,6 +8,9 @@
 - [Sesiones](https://github.com/carabedo/django#sesiones)
 - [Autentificaciones](https://github.com/carabedo/django#autentificaciones)
 - [Registro Usuarios](https://github.com/carabedo/django#registracion)
+- [Importando DB](https://github.com/carabedo/django#importando-dbs)
+- [Queries](https://github.com/carabedo/django#queries)
+- [Seguridad](https://github.com/carabedo/django#seguridad)
 
 ## Instalacion UNIX (linux/macos)
 
@@ -1576,3 +1579,276 @@ Para que esto funcione debemos modificar la vista home enviando la variable `req
     else:    
         return render(request,"app_prueba/home.html")
 ```        
+# Importando db
+
+Vamos a descagar la siguiente [db](https://colab.research.google.com/drive/1DfkpjRz5Q5mHvBZ75n0W6p5ofptBeRCx?usp=sharing) y la dejamos en la carpeta del proyecto, luego la agramos en `settings.py`:
+
+```
+    'old': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'old.db',
+    }
+```
+
+Para importar los modelor al proyecto necesitamos usar el comando:
+
+```
+python3 manage.py inspectdb --database old > old_db.py
+```
+En ese archivo `old_db.py` estan los modelos que necesitamos copiar en `models.py` (Tener cuidado con la columna 'id' y seguir las instrucciones).
+
+Django ahora administra ambas db!
+
+Ahora si vamos a cambiar la vista del about para mostrar todos los participantes!.
+
+```python
+from .models import Participantes
+def about(request):
+    nosotros = Participantes.objects.using('old').all() 
+    return render(request, "app_prueba/about.html", {'participantes': nosotros })
+```
+# Queries
+
+
+## Create
+
+Vamos a generar el modelo de los formularios de contacto en la db para guardalos, ademas vamos agregarle al formulario de contacto sobre cual proyecto quiere el usuario contactarse.
+
+Primero agregamos esto al form de contacto:
+
+```contact\forms.py
+lista=[('3','Api'),  ('4','HomeBanking'), ('5', 'Movil')]
+date = forms.DateField(initial=datetime.date.today)
+proyecto_id= forms.CharField(label='Que proyecto te intereso?', widget=forms.Select(choices=lista))
+```
+
+Para representar los datos de la tabla de la base de datos con objetos de Python, Django utiliza un sistema intuitivo: una clase modelo representa una tabla de la base de datos y una instancia de esa clase representa un registro particular en la tabla de la base de datos.
+Para crear un objeto, ejecútelo usando argumentos de palabras clave para la clase modelo, luego llame a `save()` para guardarlo en la base de datos. 
+
+Primero vamos a crear la clase contacto, para guardar todos los envíos de contacto que nos hagan los usuarios, para eso vamos a ir al modelo de nuestra app contact, vamos a guardar el nombre, el correo, el mensaje, la fecha de envio, de modificación y el proyecto.
+
+
+```python
+from portfolio.models import Proyectos
+
+class Contact(models.Model):
+  name= models.CharField(max_length=100)
+  email= models.EmailField()
+  content= models.TextField()
+  date= models.DateField()
+  project = models.CharField(max_length=100)
+  def __str__(self): 
+    return self.name
+```
+
+Una vez creada la clase vamos a realizar las migraciones correspondientes con los comandos
+
+```bash
+python3 manage.py makemigrations 
+python3 manage.py migrate
+```
+
+Si abrimos el archivo `db.sqlite3` del sitio de prueba, vamos a poder ver que se creó la tabla contacto, con los campos que definimos.
+Ahora vamos a la vista que teníamos para procesar el formulario de contacto. Los campos que recibimos los vamos a guardar en la base, adicionalmente vamos a referenciar a un proyecto, para tal fin vamos a obtener el proyecto de id 1, pero se podría modificar el formulario para preguntarlo.
+
+Ahora vamos a modificar la vista que teníamos para procesar el formulario de contacto. Los campos que recibimos los vamos a guardar en la base.
+
+```python
+##contact/views.py
+#importamos el modelo y el formulario
+from .forms import ContactoForm
+from .models import Contact
+
+#agregamos esto enla vista
+if contact_form.is_valid():
+    nameReceived = request.POST.get('name','')
+    emailReceived = request.POST.get('email','')
+    contentReceived = request.POST.get('content','')
+    date = request.POST.get('date','')
+    proyecto_id= request.POST.get('proyecto_id','')
+    contacto = Contact(name=nameReceived,email=emailReceived,content=contentReceived,date=date, project=str(proyecto_id))
+    contacto.save()
+    return render(request,'contact/contact.html',{'enviado': nameReceived})   
+```
+
+## Read
+
+En términos de SQL, un QuerySet equivale a una declaración SELECT y un filtro es una cláusula limitante como WHERE o LIMIT.
+Podemos obtener un QuerySet usando el Manger de nuestro modelo. Cada modelo tiene al menos un Manager y llama objetos de forma predeterminada.
+Solo se puede acceder a los Managers a través de clases de modelo, en lugar de instancias de modelo, para imponer una separación entre las operaciones de "nivel de tabla" y las operaciones de "nivel de registro". 
+
+Ejemplo:
+```python
+>>> Contact.objects
+<django.db.models.manager.Manager object at ...>
+>>> b = Contact(name=’victor’,email=’victor@gmail.com’,content=content,pub_date =date.today())
+>>> b.objects
+Traceback:
+...
+AttributeError: "Manager isn't accessible via Contact instances."
+```
+
+El Manager es la fuente principal de QuerySets para un modelo. Por ejemplo, `Contact.objects.all()` devuelve un QuerySet que contiene todos los objetos (filas) Contact en la base de datos.
+
+Vamos a importar desde una db previamente creado todos los participantes de los proyectos y generar una vista para la url `\about` que permita al usuario visualizar y filtrar participantes de los diferentes proyectos.
+
+Primeramente generamos el template, la vista y agregamos la url de la pagina `\about` no vamos a generar otra app, lo hacemos sobre `app_prueba` para simplicar un poco.
+
+
+```html
+<!-- heredamos del template base-->
+{% extends 'app_prueba/base.html' %}
+<!-- cargamos los recursos estaticos-->
+{% load static %}
+<!-- identificamos el contenido dinamico del titulo-->
+{% block title %}Nosotros{% endblock %}
+<!-- identificamos el contenido dinamico del imagen de fondo-->
+{% block background %}{% static 'app_prueba/img/portfolio-bg.jpg' %}{% endblock %}
+<!-- identificamos el contenido dinamico del header-->
+{% block headers %}
+    <h1>Quienes somos:</h1>
+
+{% endblock %}
+<!-- mostramos los proyectos de la base de datos-->
+{% block content %}
+<!-- usamos el template tag for que nos permite iterar y mostrar atributos-->
+    {% for persona in participantes %} 
+        <!-- Proyecto -->
+        <div class="row project">   
+            <div class="col-lg-1 col-md-1 offset-lg-4 offset-md-4">
+                {% if persona.img %}
+                <img class="img-fluid" src="{{persona.img}}" alt="">
+                {% endif %}
+            </div>
+
+            <div class="col-lg-5 col-md-3 offset-lg-3 offset-md-4">
+                <h2 class="section-heading title">{{persona.name}} {{persona.last_name}}</h2>      
+                <p>Equipo: {{persona.team}}</p>
+                <p>Proyecto: {{persona.proyect_id}}</p>
+
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+```
+Podemos ver que la plantilla ya esta lista para recibir la variable participantes, debemos en la vista escribir el codigo para importar la tabla participantes y filtrar por proyecto e incluso ordenar por nombre.
+
+
+
+## Vamos agregar un form que sirva como filtro y nos permita hacerle consultas a la db.
+
+```python
+
+lista=[('3','Api'),  ('4','HomeBanking'), ('5', 'Movil')]
+lista2=[(1,'Back'),  (2,'Front'), (3, 'UX')]
+
+class FiltroParticipantes(forms.Form):
+    name = forms.CharField(label="Contiene:", required=False)
+    #aca agregamos en el form, el campo de la fecha pero lo ocultamos en el template
+    proyecto_id= forms.CharField(label='Que proyecto te intereso?', widget=forms.Select(choices=lista))
+    team= forms.CharField(label='Que equipo te intereso?', widget=forms.Select(choices=lista2))
+``` 
+Actualizamos la vista:
+
+```python
+from .forms import FiltroParticipantes
+from .models import Participantes
+def about(request):
+    nosotros = Participantes.objects.using('old').all() 
+    filtro_form = FiltroParticipantes
+    return render(request, "app_prueba/about.html", {'participantes': nosotros , 'form': filtro_form})
+```
+Y luego el template del `about.hml`:
+
+```html
+<div class="row project">   
+
+    <div class="col-lg-5 col-md-3 offset-lg-3 offset-md-4">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                
+            <table>
+                {{form.as_p}}
+            </table>
+                
+            <input type="submit" value="Filtrar"/>            
+            </div>    
+            </form>
+    </div>
+</div>
+```
+## Filtros: 
+
+`Contact.objects.filter(pub_date__year=2020)`
+
+En nuestro caso como tenemos dos db, tenemos que especificar:
+
+`Participantes.objects.using('old').filter(proyecto_id=2)` 
+
+Tenemos que volver a modificar la vista del about, usando un if para responder al formulado enviado:
+
+```python
+from .forms import FiltroParticipantes
+from .models import Participantes
+def about(request):
+    nosotros = Participantes.objects.using('old').all() 
+    filtro_form = FiltroParticipantes
+    if request.method == "POST":
+        filtro_form = filtro_form(data=request.POST)
+        proyecto_id = request.POST.get('proyecto_id','')
+        nosotros = Participantes.objects.using('old').filter(proyect_id=proyecto_id) 
+        return render(request, "app_prueba/about.html", {'participantes': nosotros , 'form': filtro_form})
+    return render(request, "app_prueba/about.html", {'participantes': nosotros , 'form': filtro_form})
+```
+
+### Varios filtros
+
+El resultado de refinar un QuerySet es en sí mismo un QuerySet, por lo que es posible encadenar refinamientos. Por ejemplo:
+
+`filter_contacts = Contact.objects.filter(name='Santiago').exclude(pub_date__gte=datetime.date.today()).filter(pub_date__year=2020)`
+
+Esto toma el QuerySet inicial de todas las entradas en la base de datos, agrega un filtro, luego una exclusión y luego otro filtro. El resultado final es un QuerySet que contiene todas loss contactos con nombre Santiago, que se publicaron entre el 2020 y el día actual
+
+### Ordenando QuerySets
+
+Podemos ordenar los resultados que nos trae un QuerySet con el método order_by, pasando como parámetro el campo por el cual ordenamos. Por default, es ascendente.
+
+`filter_contacts = Contact.objects.all().order_by('name')`
+
+### Campos de búsqueda
+
+Las búsquedas de campo son la forma de especificar una cláusula SQL WHERE. Se especifican como argumentos de palabras clave para los métodos de QuerySet filter(), exclude() y get().
+
+Los argumentos de palabras clave de búsquedas básicas toman la forma:
+
+`field__lookuptype : value (Con doble guión bajo)`
+
+Ejemplos de lookuptype:
+
+- exact: Devuelve una coincidencia complete con el parámetro de busqueda: `filter_contacts = Contact.objects.filter(name__exact='Santiago')`
+- iexact: Deveulve una coincidencia sin importar mayúsculas o minuscuals `filter_contacts = Contact.objects.filter(name__iexact='santiago')`
+- contains: Se comporta como el LIKE de SQL `filter_contacts = Contact.objects.filter(name__contains='tiago')`
+- lte: Se comporta como menor igual <= `filter_contacts = Contact.objects.filter(pub_date__lte=date.today())`
+- gte: Se comporta como mayor igual >= `filter_contacts = Contact.objects.filter(pub_date__gte=date.today())`
+
+
+## Update
+
+Actualizando multiples objetos
+
+A veces deseamos establecer un campo en un valor particular para todos los objetos en un QuerySet. Para esto usamo el método update().
+
+Por ejemplo actualicemos la fecha de modificación de todos los contactos del año 2020:
+
+`Contact.objects.filter(pub_date__year=2020).update(mod_date=date.today())`
+
+
+## Delete
+
+El método de eliminación es delete(). Este método elimina inmediatamente el objeto y devuelve la cantidad de objetos eliminados y un diccionario con la cantidad de eliminaciones por tipo de objeto.
+
+`Contact.objects.filter(name='Silvina').delete()`
+
+
+# Seguridad
