@@ -1821,9 +1821,18 @@ Podemos ordenar los resultados que nos trae un QuerySet con el método order_by,
 
 Las búsquedas de campo son la forma de especificar una cláusula SQL WHERE. Se especifican como argumentos de palabras clave para los métodos de QuerySet filter(), exclude() y get().
 
-Los argumentos de palabras clave de búsquedas básicas toman la forma:
 
-`field__lookuptype : value (Con doble guión bajo)`
+
+
+Ejemplos de lookuptype:
+
+- exact: Devuelve una coincidencia complete con el parámetro de busqueda: `filter_contacts = Contact.objects.filter(name__exact='Santiago')`
+- iexact: Deveulve una coincidencia sin importar mayúsculas o minuscuals `filter_contacts = Contact.objects.filter(name__iexact='santiago')`
+- contains: Se comporta como el LIKE de SQL `filter_contacts = Contact.objects.filter(name__contains='tiago')`
+- lte: Se comporta como menor igual <= `filter_contacts = Contact.objects.filter(pub_date__lte=date.today())`
+- gte: Se comporta como mayor igual >= `filter_contacts = Contact.objects.filter(pub_date__gte=date.today())`
+
+https://docs.djangoproject.com/en/4.1/ref/models/querysets/#field-lookups
 
 Ejemplo:
 
@@ -1837,14 +1846,6 @@ Equivale a SQL:
 SELECT ... WHERE id = 14;
 SELECT ... WHERE id IS NULL;
 ```
-
-Ejemplos de lookuptype:
-
-- exact: Devuelve una coincidencia complete con el parámetro de busqueda: `filter_contacts = Contact.objects.filter(name__exact='Santiago')`
-- iexact: Deveulve una coincidencia sin importar mayúsculas o minuscuals `filter_contacts = Contact.objects.filter(name__iexact='santiago')`
-- contains: Se comporta como el LIKE de SQL `filter_contacts = Contact.objects.filter(name__contains='tiago')`
-- lte: Se comporta como menor igual <= `filter_contacts = Contact.objects.filter(pub_date__lte=date.today())`
-- gte: Se comporta como mayor igual >= `filter_contacts = Contact.objects.filter(pub_date__gte=date.today())`
 
 
 ## Update
