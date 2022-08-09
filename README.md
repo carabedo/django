@@ -8,8 +8,8 @@
 - [Sesiones](https://github.com/carabedo/django#sesiones)
 - [Autentificaciones](https://github.com/carabedo/django#autentificaciones)
 - [Registro Usuarios](https://github.com/carabedo/django#registracion)
-- [Importando DB](https://github.com/carabedo/django#importando-dbs)
-- [Queries](https://github.com/carabedo/django#queries)
+- [Importando DBS](https://github.com/carabedo/django#importando-db)
+- [Queries CRUD](https://github.com/carabedo/django#queries)
 - [Seguridad](https://github.com/carabedo/django#seguridad)
 
 ## Instalacion UNIX (linux/macos)
@@ -1589,6 +1589,7 @@ Vamos a descagar la siguiente [db](https://colab.research.google.com/drive/1Dfkp
         'NAME': BASE_DIR / 'old.db',
     }
 ```
+Trabajar con varias dbs tiene sus limitaciones, es preferible, insertar los datos en la tabla creada por django cuando comenzamos el proyecto usando python o alguna otra herramienta como lo hicimos [aca](https://colab.research.google.com/drive/1DfkpjRz5Q5mHvBZ75n0W6p5ofptBeRCx?usp=sharing).
 
 Para importar los modelor al proyecto necesitamos usar el comando:
 
