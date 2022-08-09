@@ -11,8 +11,52 @@ def home(request):
     else:    
         return render(request,"app_prueba/home.html")
 
+
+from .forms import FiltroParticipantes
+
+from .models import Participantes
 def about(request):
-    return render(request, "app_prueba/about.html") 
+    nosotros = Participantes.objects.using('old').all() 
+    filtro_form = FiltroParticipantes
+    return render(request, "app_prueba/about.html", {'participantes': nosotros, 'form': filtro_form })
+
+
+
+
+from .forms import FiltroParticipantes
+from .models import Participantes
+
+def about(request):
+    nosotros = Participantes.objects.using('old').all() 
+    filtro_form = FiltroParticipantes
+    if request.method == "POST":
+        filtro_form = filtro_form(data=request.POST)
+        
+        contiene = request.POST.get('name','')
+        
+        
+        team = request.POST.get('team','')
+        proyecto_id = request.POST.get('proyecto_id','')
+        
+        if team =='0':
+            if proyecto_id =='0':
+                nosotros = Participantes.objects.using('old').filter(name__contains=contiene).order_by('name')
+
+            else:
+                nosotros = Participantes.objects.using('old').filter(proyect_id=proyecto_id).filter(name__contains=contiene).order_by('name')
+
+        else:
+            nosotros = Participantes.objects.using('old').filter(proyect_id=proyecto_id).filter(team=team).filter(name__contains=contiene).order_by('name')  
+        return render(request, "app_prueba/about.html", {'participantes': nosotros , 'form': filtro_form})
+    return render(request, "app_prueba/about.html", {'participantes': nosotros , 'form': filtro_form})
+
+
+
+
+
+
+
+
 
 
 

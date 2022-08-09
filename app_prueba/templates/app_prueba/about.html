@@ -1,0 +1,52 @@
+<!-- heredamos del template base-->
+{% extends 'app_prueba/base.html' %}
+<!-- cargamos los recursos estaticos-->
+{% load static %}
+<!-- identificamos el contenido dinamico del titulo-->
+{% block title %}Nosotros{% endblock %}
+<!-- identificamos el contenido dinamico del imagen de fondo-->
+{% block background %}{% static 'app_prueba/img/portfolio-bg.jpg' %}{% endblock %}
+<!-- identificamos el contenido dinamico del header-->
+{% block headers %}
+    <h1>Quienes somos:</h1>
+
+{% endblock %}
+<!-- mostramos los proyectos de la base de datos-->
+{% block content %}
+<!-- usamos el template tag for que nos permite iterar y mostrar atributos-->
+
+
+<div class="row project">   
+
+    <div class="col-lg-5 col-md-3 offset-lg-3 offset-md-4">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                
+            <table>
+                {{form.as_p}}
+            </table>
+                
+            <input type="submit" value="Filtrar"/>            
+            </div>    
+            </form>
+    </div>
+</div>
+    {% for itemlista in participantes %} 
+        <!-- Proyecto -->
+        <div class="row project">   
+            <div class="col-lg-1 col-md-1 offset-lg-4 offset-md-4">
+                {% if itemlista.img %}
+                <img class="img-fluid" src="{{itemlista.img}}" alt="">
+                {% endif %}
+            </div>
+
+            <div class="col-lg-5 col-md-3 offset-lg-3 offset-md-4">
+                <h2 class="section-heading title">{{itemlista.name}} {{itemlista.last_name}}</h2>      
+                <p>Equipo: {{itemlista.team}}</p>
+                <p>Proyecto: {{itemlista.proyect_id}}</p>
+
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
