@@ -11,6 +11,7 @@
 - [Importando DBS](https://github.com/carabedo/django#importando-db)
 - [Queries CRUD](https://github.com/carabedo/django#queries)
 - [Seguridad](https://github.com/carabedo/django#seguridad)
+- [Subiendo el proyecto a Heroku](https://github.com/carabedo/django-heroku/blob/main/README.md)
 
 ## Instalacion UNIX (linux/macos)
 
