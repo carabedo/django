@@ -12,6 +12,7 @@
 - [Queries CRUD](https://github.com/carabedo/django#queries)
 - [Seguridad](https://github.com/carabedo/django#seguridad)
 - [Subiendo el proyecto a Heroku](https://github.com/carabedo/django-heroku/blob/main/README.md)
+- [REST framework](https://github.com/carabedo/django-rest)
 
 ## Instalacion UNIX (linux/macos)
 
